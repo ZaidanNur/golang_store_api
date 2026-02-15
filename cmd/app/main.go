@@ -43,12 +43,10 @@ func main() {
 	redisCache := cache.NewRedisCache(redisAddr)
 
 	// Initialize Repository
-	userRepo := repository.NewUserRepository(db)
 	categoryRepo := repository.NewCategoryRepository(db)
 	productRepo := repository.NewProductRepository(db)
 
 	// Initialize Usecase
-	userUsecase := usecase.NewUserUsecase(userRepo)
 	categoryUsecase := usecase.NewCategoryUsecase(categoryRepo)
 	productUsecase := usecase.NewProductUsecase(productRepo, redisCache)
 
@@ -56,7 +54,6 @@ func main() {
 	r := gin.Default()
 
 	// Initialize Delivery (Handler)
-	http.NewUserHandler(r, userUsecase)
 	http.NewCategoryHandler(r, categoryUsecase)
 	http.NewProductHandler(r, productUsecase)
 
