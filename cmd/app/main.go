@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"test-elabram/internal/cache"
 	"test-elabram/internal/delivery/http"
 	"test-elabram/internal/repository"
 	"test-elabram/internal/usecase"
@@ -34,8 +35,12 @@ func main() {
 		log.Fatalf("Failed to connect to database: %v", err)
 	}
 
-	// Auto Migrate (Optional: Can be handled by Atlas, but good for dev)
-	// db.AutoMigrate(&domain.User{})
+	// Initialize Redis Cache
+	redisAddr := os.Getenv("REDIS_URL")
+	if redisAddr == "" {
+		redisAddr = "localhost:6379"
+	}
+	redisCache := cache.NewRedisCache(redisAddr)
 
 	// Initialize Repository
 	userRepo := repository.NewUserRepository(db)
@@ -45,7 +50,7 @@ func main() {
 	// Initialize Usecase
 	userUsecase := usecase.NewUserUsecase(userRepo)
 	categoryUsecase := usecase.NewCategoryUsecase(categoryRepo)
-	productUsecase := usecase.NewProductUsecase(productRepo)
+	productUsecase := usecase.NewProductUsecase(productRepo, redisCache)
 
 	// Initialize Gin Engine
 	r := gin.Default()

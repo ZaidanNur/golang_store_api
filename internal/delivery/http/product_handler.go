@@ -22,6 +22,7 @@ func NewProductHandler(r *gin.Engine, productUsecase domain.ProductUsecase) {
 		productUsecase: productUsecase,
 	}
 
+	r.GET("/products/report", handler.GetProductReport)
 	r.GET("/products", handler.GetAllProducts)
 	r.GET("/products/:id", handler.GetProductByID)
 	r.POST("/products", handler.CreateProduct)
@@ -30,15 +31,37 @@ func NewProductHandler(r *gin.Engine, productUsecase domain.ProductUsecase) {
 }
 
 func (h *ProductHandler) GetAllProducts(c *gin.Context) {
-	products, err := h.productUsecase.GetAllProducts(c)
+	var pq dto.PaginationQuery
+	if err := c.ShouldBindQuery(&pq); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  http.StatusBadRequest,
+			"message": "Invalid pagination params",
+		})
+		return
+	}
+
+	var filters dto.ProductFilterParams
+	if err := c.ShouldBindQuery(&filters); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  http.StatusBadRequest,
+			"message": "Invalid filter params",
+		})
+		return
+	}
+
+	result, err := h.productUsecase.GetAllProductsPaginated(c, filters, pq)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{
-		"status":  http.StatusOK,
-		"message": "get products success",
-		"data":    products,
+		"status":      http.StatusOK,
+		"message":     "get products success",
+		"data":        result.Data,
+		"page":        result.Page,
+		"limit":       result.Limit,
+		"total_items": result.TotalItems,
+		"total_pages": result.TotalPages,
 	})
 }
 
@@ -162,5 +185,19 @@ func (h *ProductHandler) DeleteProduct(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"status":  http.StatusOK,
 		"message": "Product deleted successfully",
+	})
+}
+
+// GetProductReport returns a dashboard-style report of all products.
+func (h *ProductHandler) GetProductReport(c *gin.Context) {
+	report, err := h.productUsecase.GetProductReport(c)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"status":  http.StatusOK,
+		"message": "get product report success",
+		"data":    report,
 	})
 }

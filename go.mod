@@ -5,6 +5,11 @@ go 1.25.5
 require (
 	ariga.io/atlas-provider-gorm v0.6.0
 	github.com/gin-gonic/gin v1.11.0
+	github.com/go-playground/validator/v10 v10.27.0
+	github.com/joho/godotenv v1.5.1
+	github.com/redis/go-redis/v9 v9.17.3
+	gorm.io/driver/postgres v1.6.0
+	gorm.io/gorm v1.31.1
 )
 
 require (
@@ -26,6 +31,7 @@ require (
 	github.com/cespare/xxhash/v2 v2.3.0 // indirect
 	github.com/cloudwego/base64x v0.1.6 // indirect
 	github.com/cncf/xds/go v0.0.0-20250501225837-2ac532fd4443 // indirect
+	github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f // indirect
 	github.com/envoyproxy/go-control-plane/envoy v1.32.4 // indirect
 	github.com/envoyproxy/protoc-gen-validate v1.2.1 // indirect
 	github.com/felixge/httpsnoop v1.0.4 // indirect
@@ -36,7 +42,6 @@ require (
 	github.com/go-logr/stdr v1.2.2 // indirect
 	github.com/go-playground/locales v0.14.1 // indirect
 	github.com/go-playground/universal-translator v0.18.1 // indirect
-	github.com/go-playground/validator/v10 v10.27.0 // indirect
 	github.com/go-sql-driver/mysql v1.8.1 // indirect
 	github.com/goccy/go-json v0.10.2 // indirect
 	github.com/goccy/go-yaml v1.18.0 // indirect
@@ -56,7 +61,6 @@ require (
 	github.com/jackc/puddle/v2 v2.2.2 // indirect
 	github.com/jinzhu/inflection v1.0.0 // indirect
 	github.com/jinzhu/now v1.1.5 // indirect
-	github.com/joho/godotenv v1.5.1 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
 	github.com/klauspost/cpuid/v2 v2.3.0 // indirect
 	github.com/leodido/go-urn v1.4.0 // indirect
@@ -101,8 +105,6 @@ require (
 	google.golang.org/grpc v1.74.2 // indirect
 	google.golang.org/protobuf v1.36.9 // indirect
 	gorm.io/driver/mysql v1.5.7 // indirect
-	gorm.io/driver/postgres v1.6.0 // indirect
 	gorm.io/driver/sqlite v1.6.0 // indirect
 	gorm.io/driver/sqlserver v1.5.4 // indirect
-	gorm.io/gorm v1.31.1 // indirect
 )
