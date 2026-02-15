@@ -2,6 +2,7 @@ package domain
 
 import (
 	"context"
+	"test-elabram/internal/dto"
 	"time"
 )
 
@@ -25,6 +26,6 @@ type CategoryUsecase interface {
 	GetAllCategories(ctx context.Context) ([]Category, error)
 	GetCategoryByID(ctx context.Context, id int) (*Category, error)
 	CreateCategory(ctx context.Context, category *Category) error
-	EditCategory(ctx context.Context, id int, category *Category) error
+	EditCategory(ctx context.Context, id int, category *dto.UpdateCategoryRequest) (*Category, error)
 	DeleteCategory(ctx context.Context, id int) error
 }

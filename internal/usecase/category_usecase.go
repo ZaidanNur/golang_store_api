@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"test-elabram/internal/domain"
+	"test-elabram/internal/dto"
 )
 
 type categoryUsecase struct {
@@ -34,15 +35,23 @@ func (u *categoryUsecase) CreateCategory(ctx context.Context, category *domain.C
 	return u.categoryRepo.Create(ctx, category)
 }
 
-func (u *categoryUsecase) EditCategory(ctx context.Context, id int, category *domain.Category) error {
+func (u *categoryUsecase) EditCategory(ctx context.Context, id int, category *dto.UpdateCategoryRequest) (*domain.Category, error) {
 	existingCategory, err := u.categoryRepo.GetByID(ctx, id)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	existingCategory.Name = category.Name
-	existingCategory.Description = category.Description
-	return u.categoryRepo.Edit(ctx, existingCategory)
+	if category.Name != "" {
+		existingCategory.Name = category.Name
+	}
+	if category.Description != "" {
+		existingCategory.Description = category.Description
+	}
+
+	if err := u.categoryRepo.Edit(ctx, existingCategory); err != nil {
+		return nil, err
+	}
+	return existingCategory, nil
 }
 
 func (u *categoryUsecase) DeleteCategory(ctx context.Context, id int) error {

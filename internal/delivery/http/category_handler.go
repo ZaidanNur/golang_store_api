@@ -4,8 +4,13 @@ import (
 	"net/http"
 	"strconv"
 	"test-elabram/internal/domain"
+	"test-elabram/internal/dto"
+
+	"errors"
+	"test-elabram/internal/delivery/helper"
 
 	"github.com/gin-gonic/gin"
+	"github.com/go-playground/validator/v10"
 )
 
 type categoryHandler struct {
@@ -62,13 +67,34 @@ func (h *categoryHandler) GetCategoryByID(c *gin.Context) {
 }
 
 func (h *categoryHandler) CreateCategory(c *gin.Context) {
-	var category domain.Category
-	if err := c.ShouldBindJSON(&category); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid request body"})
+	var req dto.CreateCategoryRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		var ve validator.ValidationErrors
+		if errors.As(err, &ve) {
+			fieldErrors := make(map[string]string)
+			for _, fe := range ve {
+				fieldErrors[fe.Field()] = helper.MsgForTag(fe)
+			}
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  http.StatusBadRequest,
+				"message": "Validation failed",
+				"errors":  fieldErrors,
+			})
+			return
+		}
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  http.StatusBadRequest,
+			"message": "Invalid request body",
+		})
 		return
 	}
 
-	if err := h.categoryUsecase.CreateCategory(c.Request.Context(), &category); err != nil {
+	category := domain.Category{
+		Name:        req.Name,
+		Description: req.Description,
+	}
+
+	if err := h.categoryUsecase.CreateCategory(c, &category); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
@@ -80,13 +106,35 @@ func (h *categoryHandler) CreateCategory(c *gin.Context) {
 }
 
 func (h *categoryHandler) EditCategory(c *gin.Context) {
-	var category domain.Category
-	id, _ := strconv.Atoi(c.Param("id"))
-	if err := c.ShouldBindJSON(&category); err != nil {
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	if err := h.categoryUsecase.EditCategory(c.Request.Context(), id, &category); err != nil {
+
+	var req dto.UpdateCategoryRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		var ve validator.ValidationErrors
+		if errors.As(err, &ve) {
+			fieldErrors := make(map[string]string)
+			for _, fe := range ve {
+				fieldErrors[fe.Field()] = helper.MsgForTag(fe)
+			}
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  http.StatusBadRequest,
+				"message": "Validation failed",
+				"errors":  fieldErrors,
+			})
+			return
+		}
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  http.StatusBadRequest,
+			"message": "Invalid request body",
+		})
+		return
+	}
+	category, err := h.categoryUsecase.EditCategory(c, id, &req)
+	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
