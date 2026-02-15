@@ -4,7 +4,9 @@ A RESTful API for store management built with **Go**, following **Clean Architec
 
 ---
 ## 📑 API Documentation
-[Postman Collection](https://github.com/ZaidanNur/golang_store_api/blob/main/postman_collection.json)
+
+You can import [this collection ](https://github.com/ZaidanNur/golang_store_api/blob/main/test-elabram.postman_collection.json) into Postman to test the API endpoints.
+
 ---
 ## 📚 Tech Stack
 
