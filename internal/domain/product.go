@@ -1,6 +1,10 @@
 package domain
 
-import "time"
+import (
+	"context"
+	"test-elabram/internal/dto"
+	"time"
+)
 
 type Product struct {
 	ID            uint      `json:"id" gorm:"primarykey"`
@@ -9,18 +13,24 @@ type Product struct {
 	Price         int       `json:"price" gorm:"not null"`
 	StockQuantity int       `json:"stock_quantity" gorm:"not null"`
 	IsActive      bool      `json:"is_active" gorm:"not null"`
+	CategoryID    uint      `json:"category_id" gorm:"not null"`
+	Category      Category  `json:"category" gorm:"foreignKey:CategoryID"`
 	CreatedAt     time.Time `json:"created_at"`
 	UpdatedAt     time.Time `json:"updated_at"`
 }
 
 type ProductRepository interface {
-	GetAll() ([]Product, error)
-	GetByID(id int) (*Product, error)
-	Create(product *Product) error
+	GetAll(ctx context.Context) ([]Product, error)
+	GetByID(ctx context.Context, id int) (*Product, error)
+	Create(ctx context.Context, product *Product) error
+	Edit(ctx context.Context, product *Product) error
+	Delete(ctx context.Context, id int) error
 }
 
 type ProductUsecase interface {
-	GetAllProducts() ([]Product, error)
-	GetProductByID(id int) (*Product, error)
-	CreateProduct(product *Product) error
+	GetAllProducts(ctx context.Context) ([]Product, error)
+	GetProductByID(ctx context.Context, id int) (*Product, error)
+	CreateProduct(ctx context.Context, product *Product) error
+	EditProduct(ctx context.Context, id int, req *dto.UpdateProductRequest) (*Product, error)
+	DeleteProduct(ctx context.Context, id int) error
 }

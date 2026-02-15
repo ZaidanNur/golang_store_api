@@ -10,7 +10,7 @@ import (
 )
 
 func main() {
-	stmts, err := gormschema.New("postgres").Load(&domain.User{}, &domain.Category{})
+	stmts, err := gormschema.New("postgres").Load(&domain.User{}, &domain.Category{}, &domain.Product{})
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "failed to load gorm schema: %v\n", err)
 		os.Exit(1)

@@ -40,10 +40,12 @@ func main() {
 	// Initialize Repository
 	userRepo := repository.NewUserRepository(db)
 	categoryRepo := repository.NewCategoryRepository(db)
+	productRepo := repository.NewProductRepository(db)
 
 	// Initialize Usecase
 	userUsecase := usecase.NewUserUsecase(userRepo)
 	categoryUsecase := usecase.NewCategoryUsecase(categoryRepo)
+	productUsecase := usecase.NewProductUsecase(productRepo)
 
 	// Initialize Gin Engine
 	r := gin.Default()
@@ -51,6 +53,7 @@ func main() {
 	// Initialize Delivery (Handler)
 	http.NewUserHandler(r, userUsecase)
 	http.NewCategoryHandler(r, categoryUsecase)
+	http.NewProductHandler(r, productUsecase)
 
 	// Run Server
 	port := os.Getenv("SERVER_PORT")
